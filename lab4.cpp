@@ -1,4 +1,4 @@
-#include "initShaders.h"
+#include "shaders.h"
 #include <cstdlib>
 using namespace std;
 
@@ -11,7 +11,7 @@ GLfloat pit,yaw,scalar=1;
 glm::vec3 cubeTran;
 
 GLfloat size=10;
-GLfloat ncomp = 1.0f / sqrt(3.0f); // for normal vectors
+GLfloat normalVec = 1.0f / sqrt(3.0f); // for normal vectors
 
 GLfloat vertexarray[]={size,size,-size,
                        size,-size,-size,
@@ -23,50 +23,36 @@ GLfloat vertexarray[]={size,size,-size,
                        -size,size,size
 };
 
-GLfloat normsarray[] = {ncomp,ncomp,-ncomp,
-                       ncomp,-ncomp,-ncomp,
-                       -ncomp,-ncomp,-ncomp,
-                       -ncomp,ncomp,-ncomp,
-                       ncomp,ncomp,ncomp,
-                       ncomp,-ncomp,ncomp,
-                       -ncomp,-ncomp,ncomp,
-                       -ncomp,ncomp,ncomp
+GLfloat normsarray[] = {normalVec,normalVec,-normalVec,
+                       normalVec,-normalVec,-normalVec,
+                       -normalVec,-normalVec,-normalVec,
+                       -normalVec,normalVec,-normalVec,
+                       normalVec,normalVec,normalVec,
+                       normalVec,-normalVec,normalVec,
+                       -normalVec,-normalVec,normalVec,
+                       -normalVec,normalVec,normalVec
 };
 
 GLfloat colorarray[]={
-/*
-		    1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f,
-                      1.0f,0,0,1.0f*/
-                            0.5f,1.0f,1.0f,1.0f,
-                                    1.0f,0.5f,1.0f,1.0f,
-                                    1.0f,1.0f,0.5f,1.0f,
-                                    1.0f,1.0f,1.0f,1.0f,
-                                    0.5f,1.0f,1.0f,1.0f,
-                                    1.0f,0.5f,1.0f,1.0f,
-                      1.0f,1.0f,0.5f,1.0f
-
-
-
+		0.5f,1.0f,1.0f,1.0f,
+		1.0f,0.5f,1.0f,1.0f,
+		1.0f,1.0f,0.5f,1.0f,
+                1.0f,1.0f,1.0f,1.0f,
+                0.5f,1.0f,1.0f,1.0f,
+                1.0f,0.5f,1.0f,1.0f,
+                1.0f,1.0f,0.5f,1.0f
 };
 
-GLubyte elems[] = {0,1,2,
-                   3,0,
-                   4,7,
-                   3,0,
-                   1,5,
-                   4,0,
-                   3,7,
-                   6,2,
-                   3,2,
-                   5,6,2,1,
-                   5,6,2,1,5,4,7,6,
-                   4,5,6,7,4};
+GLubyte elems[] = {0,1,2,3,0,
+                   4,7,3,0,
+                   1,5,4,0,
+                   3,7,6,2,
+                   3,2,5,6,
+		   2,1,5,6,
+		   2,1,5,4,
+		   7,6,4,5,
+		   6,7,4
+};
 
 
 void init(){
@@ -78,6 +64,12 @@ void init(){
   glEnable(GL_NORMALIZE);
   
   glViewport(0, 0, 600, 600);
+  
+  ShaderInfo shaders[]={
+    { GL_VERTEX_SHADER , "vertexshader.glsl"},
+    { GL_FRAGMENT_SHADER , "fragmentshader.glsl"}, 
+    { GL_NONE , NULL} 
+  };
 	
   glGenVertexArrays(1,&vaoID);
   glBindVertexArray(vaoID);
@@ -100,17 +92,12 @@ void init(){
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,eboID);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(elems),elems,GL_STATIC_DRAW);
 
-  ShaderInfo shaders[]={
-    { GL_VERTEX_SHADER , "vertexshader.glsl"},
-    { GL_FRAGMENT_SHADER , "fragmentshader.glsl"}, 
-    { GL_NONE , NULL} 
-  };
 		
   program=initShaders(shaders);
+
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
-  
 }
 
 
@@ -152,7 +139,6 @@ void display(SDL_Window* screen){
   
   tempLoc = glGetUniformLocation(program,"HalfVector2");
   glUniform3fv(tempLoc,1,light2_dir);
-
   
   glDrawElements(GL_TRIANGLE_STRIP,36,GL_UNSIGNED_BYTE,NULL);
   glFlush();
@@ -180,13 +166,6 @@ void input(SDL_Window* screen){
       case SDLK_j:yaw+=2;break;
       case SDLK_l:yaw-=2;break;
       }
-      /*case SDL_MOUSEMOTION:
-        yaw+=((event.motion.x)-300)/10.0;
-        pit+=((event.motion.y)-300)/10.0;
-        SDL_WarpMouseInWindow(screen,300,300);
-				
-        }
-      */
     }
   }
 }
