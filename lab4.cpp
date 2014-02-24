@@ -10,20 +10,22 @@ GLuint program;
 GLfloat pit,yaw,scalar=1;
 glm::vec3 cubeTran;
 
-GLfloat size=20;
+GLfloat size=10;
 
-GLfloat vertexarray[]={0.0f,15.0f,-15.0f,
-			10.0f,-10.0f,-20.0f,
-			-10.0f,-10.0f,-20.0f,
-			0.0f,15.0f,-15.0f,
-			10.0f,-10.0f,-20.0f,
-			0.0f,15.0f,-15.0f,
-			-10.0f,-10.0f,-20.0f};
+
+GLfloat vertexarray[]={size,size,-size,
+                                   size,-size,-size,
+                       -size,-size,-size,
+                       -size,size,-size,
+                       size,size,size,
+                       size,-size,size,
+                       -size,-size,size,
+                       -size,size,size
+                       };
+
 
 
 GLfloat colorarray[]={
-//3.0f,3.0f,3.0f,3.0f,
-
 			    0.5f,1.0f,1.0f,1.0f,
 				    1.0f,0.5f,1.0f,1.0f,
 				    1.0f,1.0f,0.5f,1.0f,
@@ -67,7 +69,48 @@ void init(){
 	{ GL_FRAGMENT_SHADER , "fragmentshader.glsl"}, 
 	{ GL_NONE , NULL} 
     };
-		
+	
+/*light shit from example.c*/
+   glEnable(GL_LIGHTING);
+   glEnable(GL_LIGHT0);
+   glEnable(GL_LIGHT1);
+   glEnable(GL_DEPTH_TEST);
+
+
+  //Add positioned light
+        GLfloat lightColor0[] = {2.5f, 2.5f, 2.5f, 2.0f}; //Color (0.5, 0.5, 0.5)
+        GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
+        glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+
+
+     //Right
+        glNormal3f(1.0f, 0.0f, 0.0f);
+        //glNormal3f(1.0f, 0.0f, -1.0f);
+        glVertex3f(1.5f, -1.0f, -1.5f);
+        //glNormal3f(1.0f, 0.0f, -1.0f);
+        glVertex3f(1.5f, 1.0f, -1.5f);
+        //glNormal3f(1.0f, 0.0f, 1.0f);
+        glVertex3f(1.5f, 1.0f, 1.5f);
+        //glNormal3f(1.0f, 0.0f, 1.0f);
+        glVertex3f(1.5f, -1.0f, 1.5f);
+
+
+
+      //Left
+        glNormal3f(-1.0f, 0.0f, 0.0f);
+        //glNormal3f(-1.0f, 0.0f, -1.0f);
+        glVertex3f(-1.5f, -1.0f, -1.5f);
+        //glNormal3f(-1.0f, 0.0f, 1.0f);
+        glVertex3f(-1.5f, -1.0f, 1.5f);
+        //glNormal3f(-1.0f, 0.0f, 1.0f);
+        glVertex3f(-1.5f, 1.0f, 1.5f);
+        //glNormal3f(-1.0f, 0.0f, -1.0f);
+        glVertex3f(-1.5f, 1.0f, -1.5f);
+
+
+
+	
     program=initShaders(shaders);
   
     glEnableVertexAttribArray(0);
@@ -133,7 +176,7 @@ int main(int argc, char **argv){
 
 	//create window
     window = SDL_CreateWindow(
-	"Hollow Tetrahydron", //Window title
+	"Lighters", //Window title
 	SDL_WINDOWPOS_UNDEFINED, //initial x position
 	SDL_WINDOWPOS_UNDEFINED, //initial y position
 	500,							//width, in pixels
